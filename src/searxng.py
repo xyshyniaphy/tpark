@@ -54,8 +54,13 @@ class SearXNGClient:
             "safesearch": 1,
             "language": "ja-JP",
         }
+        headers = {
+            "User-Agent": "curl/7.81.0"
+        }
         try:
-            response = requests.get(self.instance_url, params=params, timeout=10)
+            response = requests.get(
+                self.instance_url + "/search", params=params, headers=headers, timeout=10
+            )
             response.raise_for_status()  # Raise an exception for bad status codes
             results = response.json().get("results", [])
             return self.filter_parking_results(results)[:max_results]

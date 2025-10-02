@@ -93,6 +93,11 @@ def validate_config(config: Dict[str, Any]) -> List[str]:
     for key, value in DEFAULT_CONFIG.items():
         if key not in config:
             errors.append(f"Missing required configuration key: {key}")
+        if key == "gemini_api_endpoint":
+            if not isinstance(config[key], (str, type(None))):
+                errors.append(
+                    f"Invalid type for key '{key}'. Expected str or None, got {type(config[key]).__name__}."
+                )
         elif not isinstance(config[key], type(value)):
             errors.append(
                 f"Invalid type for key '{key}'. Expected {type(value).__name__}, got {type(config[key]).__name__}."
