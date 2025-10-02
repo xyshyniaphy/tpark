@@ -15,7 +15,7 @@ Example:
     True
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from src.models import ParkingLot
 from src.utils import format_time_duration, truncate_text

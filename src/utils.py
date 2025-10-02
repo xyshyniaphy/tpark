@@ -48,6 +48,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "search_query_template": "site:*.jp 月極駐車場 {location} 屋外 平置き",
     "gemini_model": "gemini/gemini-2.0-flash",
     "gemini_api_key": "YOUR_API_KEY",
+    "gemini_api_endpoint": None,
 }
 
 

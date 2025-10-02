@@ -167,11 +167,11 @@ __version__ = "1.0.0"
 ---
 
 #### `src/gemini.py` - Gemini Integration
-**Purpose:** LLM-powered data extraction using Gemini 2.0 Flash
+**Purpose:** LLM-powered data extraction using Gemini 2.0 Flash. Supports connecting to a custom Gemini endpoint.
 
 **Classes:**
 - `GeminiExtractor`
-  - `__init__(config, system_prompt)`
+  - `__init__(config, system_prompt)`: Initializes the extractor, optionally configuring a custom Gemini endpoint.
   - `extract_parking_data(markdown, url) -> List[Dict]`
   - `parse_gemini_response(response_text) -> List[Dict]`
   - `validate_parking_data(data) -> bool`
@@ -246,6 +246,35 @@ __version__ = "1.0.0"
 - `APP_NAME: str`
 - `VERSION: str`
 - `DEFAULT_CONFIG: Dict`
+  ```python
+  {
+      "log_level": "INFO",
+      "log_file": "logs/parking_crawler.log",
+      "cache_dir": "webpages",
+      "cache_ttl_days": 7,
+      "output_file": "parking_results.md",
+      "searxng_instance_url": "http://127.0.0.1:8888",
+      "max_search_results": 10,
+      "vehicle_spec": {
+          "length_m": 4.8,
+          "width_m": 1.9,
+          "height_m": 2.1,
+      },
+      "scoring_weights": {
+          "dimension": 0.4,
+          "price": 0.3,
+          "distance": 0.2,
+          "amenity": 0.1,
+      },
+      "max_price": 100000,
+      "max_distance_km": 5.0,
+      "output_top_n": 5,
+      "search_query_template": "site:*.jp 月極駐車場 {location} 屋外 平置き",
+      "gemini_model": "gemini/gemini-2.0-flash",
+      "gemini_api_key": "YOUR_API_KEY",
+      "gemini_api_endpoint": None
+  }
+  ```
 
 **Lines of code:** ~150-200
 

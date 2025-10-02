@@ -46,7 +46,14 @@ class GeminiExtractor:
 
     def _configure_model(self):
         """Configure and return the Gemini generative model."""
-        genai.configure(api_key=self.config["gemini_api_key"])
+        client_options = {}
+        if self.config.get("gemini_api_endpoint"):
+            client_options["api_endpoint"] = self.config["gemini_api_endpoint"]
+
+        genai.configure(
+            api_key=self.config["gemini_api_key"],
+            client_options=client_options if client_options else None,
+        )
         return genai.GenerativeModel(
             model_name=self.config["gemini_model"],
             system_instruction=self.system_prompt,
