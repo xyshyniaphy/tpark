@@ -18,10 +18,13 @@ Example:
 import random
 import time
 from typing import Any, Dict, List, Optional
+import warnings
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 from markdownify import markdownify as md
+
+warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 # ==============================================================================
 # CONSTANTS
