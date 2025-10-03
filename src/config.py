@@ -17,7 +17,7 @@ import os
 from typing import Any, Dict, List
 
 import yaml
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
 from src.utils import DEFAULT_CONFIG
 
@@ -66,12 +66,18 @@ def load_yaml_env(env_file: str = ".env") -> Dict[str, Any]:
             return DEFAULT_CONFIG
 
         user_config = yaml.safe_load(yaml_content)
-        
-        # Also load regular environment variables from the .env file
-        # This allows overriding gemini_api_key with a separate GEMINI_API_KEY env var
-        load_dotenv(env_file)
-        if os.getenv("GEMINI_API_KEY"):
-            user_config["gemini_api_key"] = os.getenv("GEMINI_API_KEY")
+
+        # Load and print environment variables from the .env file for debugging
+        print("--- Loading .env file for additional variables ---")
+        env_values = dotenv_values(env_file)
+        print("Values loaded from .env file:")
+        print(env_values)
+        print("--------------------------------------------------")
+
+        # Get GEMINI_API_KEY from os.environ first, then from .env file
+        gemini_api_key = os.getenv("GEMINI_API_KEY") or env_values.get("GEMINI_API_KEY")
+        if gemini_api_key:
+            user_config["gemini_api_key"] = gemini_api_key
 
         return merge_with_defaults(user_config)
 
