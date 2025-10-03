@@ -77,21 +77,23 @@ class GeminiExtractor:
         prompt = f"Extract parking information from the following text from {url}:\n\n{markdown}"
 
         try:
+            print(f"Sending prompt to Gemini for {url}...")
             response = self.model.generate_content(
                 prompt, generation_config=generation_config
             )
             parsed_data = self.parse_gemini_response(response.text)
-            
+
             # Validate and create ParkingLot models
             valid_lots = []
             for item in parsed_data:
                 if self.validate_parking_data(item):
-                    item["url"] = url # Ensure URL is set
+                    item["url"] = url  # Ensure URL is set
                     valid_lots.append(ParkingLot(**item))
             return valid_lots
 
         except Exception as e:
             print(f"Error during Gemini API call for {url}: {e}")
+            print(f"Prompt sent to Gemini:\n{prompt}")
             return []
 
     def parse_gemini_response(self, response_text: str) -> List[Dict[str, Any]]:
