@@ -14,6 +14,7 @@ Example:
     >>> print(result['final_markdown'])
 """
 
+import logging
 import time
 from typing import Any, Dict, List
 
@@ -28,6 +29,10 @@ from src.output import generate_markdown_output, save_output
 from src.scoring import calculate_parking_score, rank_parking_lots
 from src.scraper import WebScraper, html_to_markdown
 from src.searxng import SearXNGClient
+from src.utils import APP_NAME
+
+# Get the logger for this module
+logger = logging.getLogger(APP_NAME)
 
 # ==============================================================================
 # WORKFLOW NODES
@@ -35,108 +40,193 @@ from src.searxng import SearXNGClient
 
 def node_validate_config(state: WorkflowState) -> WorkflowState:
     """Validate the application configuration."""
+    logger.debug("--- Validating configuration ---")
     errors = validate_config(state["config"])
     if errors:
+        logger.error(f"Configuration validation failed: {errors}")
         state["error"] = "\n".join(errors)
+    else:
+        logger.debug("Configuration is valid.")
     return state
 
 def node_load_system_prompt(state: WorkflowState) -> WorkflowState:
     """Load the Gemini system prompt."""
+    logger.debug("--- Loading system prompt ---")
     state["system_prompt"] = load_system_prompt("system.md")
+    logger.debug(f"System prompt loaded successfully. Length: {len(state['system_prompt'])}")
     return state
 
 def node_geocode_location(state: WorkflowState) -> WorkflowState:
     """Geocode the input place name to get coordinates."""
     place_name = state["place_name"]
+    logger.debug(f"--- Geocoding location: {place_name} ---")
+    
     coords = parse_coordinates(place_name)
-    if not coords:
+    if coords:
+        logger.debug(f"Parsed coordinates directly: {coords}")
+    else:
+        logger.debug("Could not parse coordinates, attempting to geocode...")
         coords = geocode_location(place_name)
     
     if not coords:
+        logger.error(f"Failed to geocode location: {place_name}")
         state["error"] = f"Could not geocode location: {place_name}"
-    state["target_coordinates"] = coords
+    else:
+        logger.debug(f"Geocoded coordinates: {coords}")
+        state["target_coordinates"] = coords
+        
     return state
 
 def node_searxng_search(state: WorkflowState) -> WorkflowState:
     """Perform a web search using SearXNG."""
     config = state["config"]
+    place_name = state["place_name"]
+    logger.debug(f"--- Performing SearXNG search for: {place_name} ---")
+    
     client = SearXNGClient(config["searxng_instance_url"], config)
-    query = client.build_query(state["place_name"], config["search_query_template"])
-    state["search_results"] = client.search(query, config["max_search_results"])
+    query = client.build_query(place_name, config["search_query_template"])
+    logger.debug(f"Constructed search query: {query}")
+    
+    results = client.search(query, config["max_search_results"])
+    state["search_results"] = results
+    logger.debug(f"Found {len(results)} search results.")
     return state
 
 def node_scrape_and_cache(state: WorkflowState) -> WorkflowState:
     """Scrape web pages and cache their content as Markdown."""
     config = state["config"]
+    place_name = state["place_name"]
+    logger.debug(f"--- Scraping and caching content for: {place_name} ---")
+    
     scraper = WebScraper(config)
     cache = CacheManager(config["cache_dir"], config["cache_ttl_days"])
     scraped_content = []
+    
+    search_results = state.get("search_results", [])
+    logger.debug(f"Processing {len(search_results)} URLs from search results.")
 
-    for result in state["search_results"]:
+    for i, result in enumerate(search_results):
         url = result["url"]
-        cached_md = cache.load_markdown(url, state["place_name"])
+        logger.debug(f"Processing URL {i+1}/{len(search_results)}: {url}")
+        
+        cached_md = cache.load_markdown(url, place_name)
         if cached_md:
+            logger.debug(f"Cache hit for {url}. Loading from cache.")
             scraped_content.append({"url": url, "markdown": cached_md})
             continue
 
+        logger.debug(f"Cache miss for {url}. Fetching from web.")
         html = scraper.fetch(url)
         if html:
+            logger.debug(f"Successfully fetched {len(html)} bytes of HTML.")
             markdown = html_to_markdown(html)
-            cache.save_markdown(url, state["place_name"], markdown)
+            logger.debug(f"Converted HTML to {len(markdown)} characters of Markdown.")
+            cache.save_markdown(url, place_name, markdown)
+            logger.debug(f"Saved Markdown to cache.")
             scraped_content.append({"url": url, "markdown": markdown})
+        else:
+            logger.warning(f"Failed to fetch HTML from {url}.")
     
     state["scraped_content"] = scraped_content
+    logger.debug(f"Finished scraping. Total scraped pages: {len(scraped_content)}")
     return state
 
 def node_extract_with_gemini(state: WorkflowState) -> WorkflowState:
     """Extract structured data from Markdown using Gemini."""
     config = state["config"]
-    extractor = GeminiExtractor(config, state["system_prompt"])
+    system_prompt = state["system_prompt"]
+    logger.debug("--- Extracting structured data with Gemini ---")
+    
+    extractor = GeminiExtractor(config, system_prompt)
     extracted_data = []
+    
+    scraped_content = state.get("scraped_content", [])
+    logger.debug(f"Processing {len(scraped_content)} scraped documents with Gemini.")
 
-    for content in state["scraped_content"]:
-        lots = extractor.extract_parking_data(content["markdown"], content["url"])
-        extracted_data.extend(lots)
+    for i, content in enumerate(scraped_content):
+        url = content["url"]
+        markdown = content["markdown"]
+        logger.debug(f"Extracting from document {i+1}/{len(scraped_content)} (URL: {url}, Markdown length: {len(markdown)})")
+        
+        try:
+            lots = extractor.extract_parking_data(markdown, url)
+            if lots:
+                logger.debug(f"Extracted {len(lots)} parking lots from {url}.")
+                extracted_data.extend(lots)
+            else:
+                logger.warning(f"No parking lots extracted from {url}.")
+        except Exception as e:
+            logger.error(f"An error occurred during Gemini extraction for {url}: {e}", exc_info=True)
 
     state["extracted_data"] = extracted_data
+    logger.debug(f"Finished Gemini extraction. Total lots extracted: {len(extracted_data)}")
     return state
 
 def node_score_and_rank(state: WorkflowState) -> WorkflowState:
     """Score and rank the extracted parking lots."""
+    logger.debug("--- Scoring and ranking parking lots ---")
     scored_lots = []
-    for lot in state["extracted_data"]:
-        if lot.coordinates:
+    
+    extracted_data = state.get("extracted_data", [])
+    target_coords = state.get("target_coordinates")
+    vehicle_spec = state.get("config", {}).get("vehicle_spec")
+    
+    logger.debug(f"Scoring {len(extracted_data)} extracted lots.")
+
+    for lot in extracted_data:
+        if lot.coordinates and target_coords:
             lot.distance_km = calculate_distance(
-                state["target_coordinates"],
+                target_coords,
                 parse_coordinates(lot.coordinates)
             )
+            logger.debug(f"Calculated distance for lot {lot.name}: {lot.distance_km:.2f} km")
         
         scored_lot = calculate_parking_score(
             lot, 
-            state["config"]["vehicle_spec"], 
-            state["target_coordinates"], 
+            vehicle_spec, 
+            target_coords, 
             state["config"]
         )
         scored_lots.append(scored_lot)
+        logger.debug(f"Scored lot '{scored_lot.name}': {scored_lot.score:.2f}")
 
-    state["ranked_lots"] = rank_parking_lots(scored_lots)
+    ranked_lots = rank_parking_lots(scored_lots)
+    state["ranked_lots"] = ranked_lots
+    logger.debug(f"Ranked {len(ranked_lots)} lots.")
     return state
 
 def node_generate_output(state: WorkflowState) -> WorkflowState:
     """Generate the final Markdown output."""
+    logger.debug("--- Generating final Markdown output ---")
+    
+    ranked_lots = state.get("ranked_lots", [])
+    config = state["config"]
+    output_file = config.get("output_file")
+    
     metadata = {
-        "place_name": state["place_name"],
-        "target_coordinates": state["target_coordinates"],
+        "place_name": state.get("place_name"),
+        "target_coordinates": state.get("target_coordinates"),
         "total_duration_s": time.time() - state.get("_start_time", time.time()),
+        "total_lots_found": len(state.get("extracted_data", [])),
+        "total_lots_ranked": len(ranked_lots),
     }
+    
+    logger.debug(f"Generating output with {metadata['total_lots_ranked']} ranked lots.")
+    
     markdown = generate_markdown_output(
-        state["ranked_lots"], 
-        state["place_name"], 
-        state["config"], 
+        ranked_lots, 
+        state.get("place_name"), 
+        config, 
         metadata
     )
     state["final_markdown"] = markdown
-    save_output(markdown, state["config"]["output_file"])
+    
+    if output_file:
+        save_output(markdown, output_file)
+        logger.info(f"Final report saved to {output_file}")
+    else:
+        logger.warning("No output file specified in config. Report not saved.")
+        
     return state
 
 # ==============================================================================
@@ -187,5 +277,7 @@ def execute_workflow(place_name: str, config: Dict[str, Any]) -> Dict[str, Any]:
         "config": config,
         "_start_time": time.time(),
     }
+    logger.info(f"Starting workflow for location: '{place_name}'")
     final_state = graph.invoke(initial_state)
+    logger.info("Workflow finished.")
     return final_state

@@ -211,7 +211,7 @@ __version__ = "1.0.0"
 ---
 
 #### `src/workflow.py` - LangGraph Workflow
-**Purpose:** Orchestrate the entire workflow using LangGraph
+**Purpose:** Orchestrate the entire workflow using LangGraph. Includes detailed DEBUG-level logging for each step to allow for thorough debugging.
 
 **Functions (LangGraph Nodes):**
 - `node_validate_config(state) -> WorkflowState`
