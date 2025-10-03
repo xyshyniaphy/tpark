@@ -632,3 +632,4 @@ result = some_complex_calculation()  # Why this is needed
 **Next Step:** Implement modules in order (Phase 1 → Phase 5)
 
 ---
+do not use gemini key from .bashrc or system env.

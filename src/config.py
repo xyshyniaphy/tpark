@@ -66,10 +66,6 @@ def load_yaml_env(env_file: str = ".env") -> Dict[str, Any]:
             return DEFAULT_CONFIG
 
         user_config = yaml.safe_load(yaml_content)
-        
-        # Allow overriding gemini_api_key with a separate GEMINI_API_KEY env var
-        if os.getenv("GEMINI_API_KEY"):
-            user_config["gemini_api_key"] = os.getenv("GEMINI_API_KEY")
 
         config = merge_with_defaults(user_config)
 
