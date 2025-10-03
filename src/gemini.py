@@ -18,6 +18,7 @@ Example:
 """
 
 import json
+import time
 from typing import Any, Dict, List
 
 import google.generativeai as genai
@@ -50,6 +51,8 @@ class GeminiExtractor:
         if self.config.get("gemini_api_endpoint"):
             client_options["api_endpoint"] = self.config["gemini_api_endpoint"]
 
+        print(f"--- Gemini Client Options: {client_options} ---")
+
         genai.configure(
             api_key=self.config["gemini_api_key"],
             client_options=client_options if client_options else None,
@@ -75,11 +78,17 @@ class GeminiExtractor:
             temperature=0.1,
         )
         prompt = f"Extract parking information from the following text from {url}:\n\n{markdown}"
+        
+        request_options = {"timeout": self.config.get("gemini_request_timeout", 600.0)}
 
+        start_time = time.time()
         try:
             print(f"--- Sending prompt to Gemini for URL: {url} ---")
+            print(f"--- Request Options: {request_options} ---")
             response = self.model.generate_content(
-                prompt, generation_config=generation_config
+                prompt, 
+                generation_config=generation_config,
+                request_options=request_options
             )
             parsed_data = self.parse_gemini_response(response.text)
 
@@ -92,7 +101,8 @@ class GeminiExtractor:
             return valid_lots
 
         except Exception as e:
-            print(f"Error during Gemini API call for {url}: {e}")
+            duration = time.time() - start_time
+            print(f"Error during Gemini API call for {url} (duration: {duration:.2f}s): {e}")
             print(f"Prompt sent to Gemini:\n{prompt}")
             return []
 
