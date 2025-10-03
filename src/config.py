@@ -71,7 +71,14 @@ def load_yaml_env(env_file: str = ".env") -> Dict[str, Any]:
         if os.getenv("GEMINI_API_KEY"):
             user_config["gemini_api_key"] = os.getenv("GEMINI_API_KEY")
 
-        return merge_with_defaults(user_config)
+        config = merge_with_defaults(user_config)
+
+        print("--- Loaded Configuration ---")
+        import json
+        print(json.dumps(config, indent=4))
+        print("--------------------------")
+
+        return config
 
     except (yaml.YAMLError, IndexError) as e:
         print(f"Error parsing YAML from {env_file}: {e}")

@@ -77,7 +77,7 @@ class GeminiExtractor:
         prompt = f"Extract parking information from the following text from {url}:\n\n{markdown}"
 
         try:
-            print(f"Sending prompt to Gemini for {url}...")
+            print(f"--- Sending prompt to Gemini for URL: {url} ---")
             response = self.model.generate_content(
                 prompt, generation_config=generation_config
             )
