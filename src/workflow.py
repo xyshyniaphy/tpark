@@ -19,7 +19,6 @@ import time
 from typing import Any, Dict, List
 from urllib.parse import urljoin
 
-from bs4 import BeautifulSoup
 from langgraph.graph import StateGraph, END
 
 from src.cache import CacheManager
@@ -29,7 +28,7 @@ from src.gemini import GeminiExtractor
 from src.models import WorkflowState, ParkingLot
 from src.output import generate_markdown_output, save_output
 from src.scoring import calculate_parking_score, rank_parking_lots
-from src.scraper import WebScraper, html_to_markdown
+from src.scraper import WebScraper
 from src.searxng import SearXNGClient
 from src.utils import APP_NAME
 
@@ -95,35 +94,30 @@ def node_searxng_search(state: WorkflowState) -> WorkflowState:
     return state
 
 def node_scrape_and_cache(state: WorkflowState) -> WorkflowState:
-    """Scrape web pages, follow detail and pagination links, and cache content."""
+    """Scrape web pages and cache their HTML content."""
     config = state["config"]
     place_name = state["place_name"]
-    logger.debug(f"--- Scraping and caching content for: {place_name} ---")
+    logger.debug(f"--- Scraping and caching HTML for: {place_name} ---")
 
     scraper = WebScraper(config)
     cache = CacheManager(config["cache_dir"], config["cache_ttl_days"])
     
     scraped_content = []
-    urls_to_process = [result["url"] for result in state.get("search_results", [])]
     processed_urls = set()
-    max_pages = config.get("max_crawl_pages", 5) # Limit pages to avoid infinite loops
-    pages_crawled = 0
 
-    while urls_to_process and pages_crawled < max_pages:
-        url = urls_to_process.pop(0)
+    for result in state.get("search_results", []) :
+        url = result["url"]
         if url in processed_urls:
             continue
 
         processed_urls.add(url)
-        pages_crawled += 1
-        logger.debug(f"Processing URL ({pages_crawled}/{max_pages}): {url}")
+        logger.debug(f"Processing URL: {url}")
 
         # Check cache first
-        cached_md = cache.load_markdown(url, place_name)
-        if cached_md:
+        cached_html = cache.load_html(url, place_name)
+        if cached_html:
             logger.debug(f"Cache hit for {url}. Loading from cache.")
-            # Simple assumption: cached content is a detail page
-            scraped_content.append({"url": url, "markdown": cached_md})
+            scraped_content.append({"url": url, "html": cached_html})
             continue
 
         logger.debug(f"Cache miss for {url}. Fetching from web.")
@@ -132,45 +126,15 @@ def node_scrape_and_cache(state: WorkflowState) -> WorkflowState:
             logger.warning(f"Failed to fetch HTML from {url}.")
             continue
 
-        soup = BeautifulSoup(html, "lxml")
-        # Heuristic to decide if it's a list page or detail page
-        # This is specific to carparking.jp but can be generalized
-        is_list_page = soup.select_one(".list-item, .result-list")
-        is_detail_page = soup.select_one(".detail-main, .parking-details")
-
-        if is_detail_page and not is_list_page:
-            logger.debug(f"Identified as a detail page. Extracting content.")
-            markdown = html_to_markdown(html)
-            cache.save_markdown(url, place_name, markdown)
-            scraped_content.append({"url": url, "markdown": markdown})
-        elif is_list_page:
-            logger.debug(f"Identified as a list page. Finding detail and next page links.")
-            # Find detail page links
-            detail_links = soup.select("a[href*='/detail/']")
-            for link in detail_links:
-                detail_url = urljoin(url, link['href'])
-                if detail_url not in processed_urls:
-                    urls_to_process.append(detail_url)
-            
-            # Find next page link
-            next_page_link = soup.select_one("a[rel='next'], a:contains('次へ'), a.next")
-            if next_page_link:
-                next_page_url = urljoin(url, next_page_link['href'])
-                if next_page_url not in processed_urls:
-                    urls_to_process.append(next_page_url)
-        else:
-            # Default to treating it as a detail page if unsure
-            logger.debug("Could not determine page type, treating as detail page.")
-            markdown = html_to_markdown(html)
-            cache.save_markdown(url, place_name, markdown)
-            scraped_content.append({"url": url, "markdown": markdown})
+        cache.save_html(url, place_name, html)
+        scraped_content.append({"url": url, "html": html})
 
     state["scraped_content"] = scraped_content
-    logger.debug(f"Finished scraping. Total detail pages found: {len(scraped_content)}")
+    logger.debug(f"Finished scraping. Total pages scraped: {len(scraped_content)}")
     return state
 
 def node_extract_with_gemini(state: WorkflowState) -> WorkflowState:
-    """Extract structured data from Markdown using Gemini."""
+    """Extract structured data from HTML using Gemini."""
     config = state["config"]
     system_prompt = state["system_prompt"]
     logger.debug("--- Extracting structured data with Gemini ---")
@@ -183,11 +147,11 @@ def node_extract_with_gemini(state: WorkflowState) -> WorkflowState:
 
     for i, content in enumerate(scraped_content):
         url = content["url"]
-        markdown = content["markdown"]
-        logger.debug(f"Extracting from document {i+1}/{len(scraped_content)} (URL: {url}, Markdown length: {len(markdown)})")
+        html = content["html"]
+        logger.debug(f"Extracting from document {i+1}/{len(scraped_content)} (URL: {url}, HTML length: {len(html)})")
         
         try:
-            lots = extractor.extract_parking_data(markdown, url)
+            lots = extractor.extract_parking_data(html, url)
             if lots:
                 logger.debug(f"Extracted {len(lots)} parking lots from {url}.")
                 extracted_data.extend(lots)

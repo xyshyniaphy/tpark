@@ -38,7 +38,7 @@ tokyo_parking_crawler/
 │   └── utils.py                    # Utility functions
 │
 ├── webpages/                       # Cache directory (auto-created)
-│   ├── *.md                        # Cached markdown files
+│   ├── *.html                        # Cached html files
 │   └── *.json                      # Cached JSON data
 │
 ├── logs/                           # Log directory (auto-created)
@@ -108,9 +108,9 @@ __version__ = "1.0.0"
 **Classes:**
 - `CacheManager`
   - `__init__(cache_dir, ttl_days)`
-  - `save_markdown(url, location, html) -> Path`
+  - `save_html(url, location, html) -> Path`
   - `save_json(url, location, data) -> Path`
-  - `load_markdown(url, location) -> Optional[str]`
+  - `load_html(url, location) -> Optional[str]`
   - `load_json(url, location) -> Optional[List[Dict]]`
   - `is_cache_valid(cache_file) -> bool`
   - `get_cache_stats() -> Dict`
@@ -156,7 +156,6 @@ __version__ = "1.0.0"
   - `_retry_request(url, attempts) -> Optional[str]`
 
 **Functions:**
-- `html_to_markdown(html: str) -> str`
 - `clean_html(soup: BeautifulSoup) -> BeautifulSoup`
 
 **Constants:**
@@ -172,7 +171,7 @@ __version__ = "1.0.0"
 **Classes:**
 - `GeminiExtractor`
   - `__init__(config, system_prompt)`: Initializes the extractor, optionally configuring a custom Gemini endpoint.
-  - `extract_parking_data(markdown, url) -> List[Dict]`
+  - `extract_parking_data(html, url) -> List[Dict]`
   - `parse_gemini_response(response_text) -> List[Dict]`
   - `validate_parking_data(data) -> bool`
 

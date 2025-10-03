@@ -2,17 +2,15 @@
 Web scraping and HTML processing for the Tokyo Parking Crawler.
 
 This module provides a WebScraper class for fetching HTML content from URLs
-with retries and random user agents. It also includes functions to convert
-HTML to Markdown and to clean up the HTML before conversion.
+with retries and random user agents.
 
 Example:
-    >>> from src.scraper import WebScraper, html_to_markdown
+    >>> from src.scraper import WebScraper
     >>> from src.utils import DEFAULT_CONFIG
     >>> scraper = WebScraper(config=DEFAULT_CONFIG)
     >>> html = scraper.fetch("http://example.com")
     >>> if html:
-    ...     markdown = html_to_markdown(html)
-    ...     print(markdown)
+    ...     print(html)
 """
 
 import random
@@ -21,8 +19,7 @@ from typing import Any, Dict, List, Optional
 import warnings
 
 import requests
-from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
-from markdownify import markdownify as md
+from bs4 import XMLParsedAsHTMLWarning
 
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
@@ -89,39 +86,3 @@ class WebScraper:
             The HTML content as a string, or None on failure.
         """
         return self._retry_request(url)
-
-# ==============================================================================
-# FUNCTIONS
-# ==============================================================================
-
-def clean_html(soup: BeautifulSoup) -> BeautifulSoup:
-    """
-    Remove unnecessary elements from a BeautifulSoup object.
-
-    This function removes scripts, styles, navigation, footers, and other
-    elements that are unlikely to contain relevant parking information.
-
-    Args:
-        soup: The BeautifulSoup object to clean.
-
-    Returns:
-        The cleaned BeautifulSoup object.
-    """
-    for element in soup(["script", "style", "header", "footer", "nav", "aside"]):
-        element.decompose()
-    return soup
-
-def html_to_markdown(html: str) -> str:
-    """
-    Convert HTML content to clean Markdown.
-
-    Args:
-        html: The HTML content as a string.
-
-    Returns:
-        The converted Markdown content as a string.
-    """
-    soup = BeautifulSoup(html, "lxml")
-    cleaned_soup = clean_html(soup)
-    # Use markdownify to convert the cleaned HTML to Markdown
-    return md(str(cleaned_soup.body), heading_style="ATX", bullets="* ")

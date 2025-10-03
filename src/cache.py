@@ -2,17 +2,17 @@
 File-based cache management for the Tokyo Parking Crawler.
 
 This module provides a CacheManager class to handle storing and retrieving
-scraped HTML content (as Markdown) and extracted JSON data. The cache
+scraped HTML content and extracted JSON data. The cache
 supports a time-to-live (TTL) to ensure data freshness.
 
 Example:
     >>> from src.cache import CacheManager
     >>> cache = CacheManager(cache_dir="cache", ttl_days=7)
-    >>> cache.save_markdown("http://example.com", "Shibuya", "<h1>Hello</h1>")
+    >>> cache.save_html("http://example.com", "Shibuya", "<h1>Hello</h1>")
     >>> if cache.is_cache_valid("http://example.com", "Shibuya"):
-    ...     content = cache.load_markdown("http://example.com", "Shibuya")
+    ...     content = cache.load_html("http://example.com", "Shibuya")
     ...     print(content)
-    # Hello
+    <h1>Hello</h1>
 """
 
 import hashlib
@@ -48,21 +48,21 @@ class CacheManager:
         hashed_name = hashlib.md5(unique_string.encode()).hexdigest()
         return self.cache_dir / f"{hashed_name}.{extension}"
 
-    def save_markdown(self, url: str, location: str, markdown_content: str) -> Path:
+    def save_html(self, url: str, location: str, html_content: str) -> Path:
         """
-        Save scraped and converted Markdown content to the cache.
+        Save scraped HTML content to the cache.
 
         Args:
             url: The original URL of the scraped page.
             location: The location associated with the scrape.
-            markdown_content: The content to save.
+            html_content: The content to save.
 
         Returns:
             The path to the saved cache file.
         """
-        cache_file = self._get_cache_path(url, location, "md")
+        cache_file = self._get_cache_path(url, location, "html")
         with open(cache_file, "w", encoding="utf-8") as f:
-            f.write(markdown_content)
+            f.write(html_content)
         return cache_file
 
     def save_json(self, url: str, location: str, data: List[Dict[str, Any]]) -> Path:
@@ -82,9 +82,9 @@ class CacheManager:
             json.dump(data, f, ensure_ascii=False, indent=4)
         return cache_file
 
-    def load_markdown(self, url: str, location: str) -> Optional[str]:
+    def load_html(self, url: str, location: str) -> Optional[str]:
         """
-        Load Markdown content from the cache if it is valid.
+        Load HTML content from the cache if it is valid.
 
         Args:
             url: The original URL of the scraped page.
@@ -93,7 +93,7 @@ class CacheManager:
         Returns:
             The cached content, or None if not found or stale.
         """
-        cache_file = self._get_cache_path(url, location, "md")
+        cache_file = self._get_cache_path(url, location, "html")
         if self.is_cache_valid(cache_file):
             with open(cache_file, "r", encoding="utf-8") as f:
                 return f.read()

@@ -1,8 +1,8 @@
 """
-Gemini LLM integration for extracting parking data from Markdown.
+Gemini LLM integration for extracting parking data from HTML.
 
 This module provides a GeminiExtractor class that uses the Gemini API
-to parse Markdown content and extract structured parking lot information
+to parse HTML content and extract structured parking lot information
 according to the Pydantic models.
 
 Example:
@@ -10,8 +10,8 @@ Example:
     >>> from src.utils import DEFAULT_CONFIG
     >>> system_prompt = "Extract parking data."
     >>> extractor = GeminiExtractor(config=DEFAULT_CONFIG, system_prompt=system_prompt)
-    >>> markdown = "Parking available for 50000 JPY per month."
-    >>> data = extractor.extract_parking_data(markdown, "http://example.com")
+    >>> html = "<body>Parking available for 50000 JPY per month.</body>"
+    >>> data = extractor.extract_parking_data(html, "http://example.com")
     >>> if data:
     ...     print(data[0].pricing.monthly_fee)
     50000
@@ -62,12 +62,12 @@ class GeminiExtractor:
             system_instruction=self.system_prompt,
         )
 
-    def extract_parking_data(self, markdown: str, url: str) -> List[ParkingLot]:
+    def extract_parking_data(self, html: str, url: str) -> List[ParkingLot]:
         """
-        Extract parking data from Markdown content using the Gemini API.
+        Extract parking data from HTML content using the Gemini API.
 
         Args:
-            markdown: The Markdown content to process.
+            html: The HTML content to process.
             url: The source URL of the content.
 
         Returns:
@@ -77,7 +77,7 @@ class GeminiExtractor:
             response_mime_type="application/json",
             temperature=0.1,
         )
-        prompt = f"Extract parking information from the following text from {url}:\n\n{markdown}"
+        prompt = f"Extract parking information from the following HTML from {url}:\n\n{html}"
         
         request_options = {"timeout": self.config.get("gemini_request_timeout", 600.0)}
 
