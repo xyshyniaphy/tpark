@@ -49,6 +49,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "gemini_model": "gemini/gemini-2.0-flash",
     "gemini_api_key": "YOUR_API_KEY",
     "gemini_api_endpoint": None,
+    "max_crawl_pages": 10,
 }
 
 

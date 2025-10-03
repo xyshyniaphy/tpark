@@ -272,7 +272,8 @@ __version__ = "1.0.0"
       "search_query_template": "site:*.jp 月極駐車場 {location} 屋外 平置き",
       "gemini_model": "gemini/gemini-2.0-flash",
       "gemini_api_key": "YOUR_API_KEY",
-      "gemini_api_endpoint": None
+      "gemini_api_endpoint": None,
+      "max_crawl_pages": 10
   }
   ```
 
@@ -393,8 +394,9 @@ tokyo_parking_crawler.py (MAIN)
             │   └─> src/searxng.py
             │
             ├─> node_scrape_and_cache
-            │   ├─> src/scraper.py
-            │   └─> src/cache.py
+            │   ├─> src/scraper.py (WebScraper)
+            │   ├─> src/cache.py (CacheManager)
+            │   └─> Follows detail and pagination links to crawl multiple pages.
             │
             ├─> node_extract_with_gemini
             │   ├─> src/gemini.py
