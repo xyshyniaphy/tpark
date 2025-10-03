@@ -255,10 +255,11 @@ def build_workflow_graph() -> StateGraph:
     workflow.add_edge("load_system_prompt", "geocode_location")
     workflow.add_edge("geocode_location", "searxng_search")
     workflow.add_edge("searxng_search", "scrape_and_cache")
-    workflow.add_edge("scrape_and_cache", "extract_with_gemini")
-    workflow.add_edge("extract_with_gemini", "score_and_rank")
-    workflow.add_edge("score_and_rank", "generate_output")
-    workflow.add_edge("generate_output", END)
+    workflow.add_edge("scrape_and_cache", END) # Temporarily end after scraping
+    # workflow.add_edge("scrape_and_cache", "extract_with_gemini")
+    # workflow.add_edge("extract_with_gemini", "score_and_rank")
+    # workflow.add_edge("score_and_rank", "generate_output")
+    # workflow.add_edge("generate_output", END)
 
     return workflow.compile()
 
