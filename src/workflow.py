@@ -94,10 +94,10 @@ def node_searxng_search(state: WorkflowState) -> WorkflowState:
     return state
 
 def node_scrape_and_cache(state: WorkflowState) -> WorkflowState:
-    """Scrape web pages and cache their HTML content."""
+    """Scrape web pages, clean HTML, and cache the cleaned content."""
     config = state["config"]
     place_name = state["place_name"]
-    logger.debug(f"--- Scraping and caching HTML for: {place_name} ---")
+    logger.debug(f"--- Scraping, cleaning, and caching HTML for: {place_name} ---")
 
     scraper = WebScraper(config)
     cache = CacheManager(config["cache_dir"], config["cache_ttl_days"])
@@ -125,12 +125,22 @@ def node_scrape_and_cache(state: WorkflowState) -> WorkflowState:
         if not html:
             logger.warning(f"Failed to fetch HTML from {url}.")
             continue
+        
+        logger.debug(f"Cleaning HTML for {url}")
+        cleaned_html = scraper.clean_html(html)
 
-        cache.save_html(url, place_name, html)
-        scraped_content.append({"url": url, "html": html})
+        cache.save_html(url, place_name, cleaned_html)
+        scraped_content.append({"url": url, "html": cleaned_html})
 
     state["scraped_content"] = scraped_content
-    logger.debug(f"Finished scraping. Total pages scraped: {len(scraped_content)}")
+    logger.debug(f"Finished scraping and cleaning. Total pages processed: {len(scraped_content)}")
+    
+    # For debugging, save the cleaned HTML to a file
+    if scraped_content:
+        with open("cleaned_debug.html", "w", encoding="utf-8") as f:
+            f.write(scraped_content[0]["html"])
+        logger.info("Saved the first cleaned HTML to cleaned_debug.html for debugging.")
+
     return state
 
 def node_extract_with_gemini(state: WorkflowState) -> WorkflowState:
@@ -255,7 +265,7 @@ def build_workflow_graph() -> StateGraph:
     workflow.add_edge("load_system_prompt", "geocode_location")
     workflow.add_edge("geocode_location", "searxng_search")
     workflow.add_edge("searxng_search", "scrape_and_cache")
-    workflow.add_edge("scrape_and_cache", END) # Temporarily end after scraping
+    workflow.add_edge("scrape_and_cache", END)
     # workflow.add_edge("scrape_and_cache", "extract_with_gemini")
     # workflow.add_edge("extract_with_gemini", "score_and_rank")
     # workflow.add_edge("score_and_rank", "generate_output")
