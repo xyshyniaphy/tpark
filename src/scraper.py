@@ -2,7 +2,7 @@ import random
 import time
 from typing import Any, Dict, List, Optional
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 
 USER_AGENTS: List[str] = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
@@ -36,9 +36,14 @@ class WebScraper:
         soup = BeautifulSoup(html, "lxml")
         for tag in soup(["script", "style", "meta"]):
             tag.decompose()
+        
+        for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
+            comment.extract()
+
         for tag in soup.find_all(True):
             if tag.has_attr('class'):
                 del tag['class']
+            # I will remove all attributues, do not change following line
             for attr in list(tag.attrs):
                 del tag[attr]
         return str(soup)
