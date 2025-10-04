@@ -16,6 +16,7 @@
 tokyo_parking_crawler/
 │
 ├── tokyo_parking_crawler.py       # Main entry point (CLI)
+├── test_parse.py                  # Test script for individual parsers
 ├── system.md                       # Gemini system prompt
 ├── .env                            # User configuration (gitignored)
 ├── .env.sample                     # Sample configuration
@@ -25,6 +26,10 @@ tokyo_parking_crawler/
 │
 ├── src/                            # Source code modules
 │   ├── __init__.py                 # Package initializer
+│   ├── parsers/                    # Site-specific parsers
+│   │   ├── __init__.py             # Parser registry
+│   │   ├── base_parser.py          # Base class for parsers
+│   │   └── carparking_jp.py        # Parser for carparking.jp
 │   ├── config.py                   # Configuration management
 │   ├── models.py                   # Data models (Pydantic)
 │   ├── cache.py                    # Cache management
@@ -62,6 +67,11 @@ tokyo_parking_crawler/
 - Display results
 
 **Lines of code:** ~150-200
+
+#### `test_parse.py` (Parser Test Script)
+- A dedicated utility for testing individual parsers on local HTML files.
+- Allows for rapid development and debugging of parsers.
+- This file is intended for development and testing, and should be kept in the project.
 
 ---
 
@@ -165,6 +175,20 @@ __version__ = "1.0.0"
 
 ---
 
+#### `src/parsers/` - Site-specific Parsers
+**Purpose:** Contains parsers for specific websites to extract parking lot data from cleaned HTML.
+
+**`src/parsers/__init__.py`**
+- Registers available parsers and provides a function to get the correct parser for a given URL.
+
+**`src/parsers/base_parser.py`**
+- Defines the `BaseParser` abstract base class that all site-specific parsers must inherit from.
+
+**`src/parsers/carparking_jp.py`**
+- A concrete implementation of `BaseParser` for the `carparking.jp` website.
+
+---
+
 #### `src/gemini.py` - Gemini Integration
 **Purpose:** LLM-powered data extraction using Gemini 2.0 Flash. Supports connecting to a custom Gemini endpoint.
 
@@ -218,7 +242,7 @@ __version__ = "1.0.0"
 - `node_geocode_location(state) -> WorkflowState`
 - `node_searxng_search(state) -> WorkflowState`
 - `node_scrape_and_cache(state) -> WorkflowState`
-- `node_extract_with_gemini(state) -> WorkflowState`
+- `node_extract_data(state) -> WorkflowState`
 - `node_score_and_rank(state) -> WorkflowState`
 - `node_generate_output(state) -> WorkflowState`
 
@@ -397,8 +421,8 @@ tokyo_parking_crawler.py (MAIN)
             │   ├─> src/cache.py (CacheManager)
             │   └─> Follows detail and pagination links to crawl multiple pages.
             │
-            ├─> node_extract_with_gemini
-            │   ├─> src/gemini.py
+            ├─> node_extract_data
+            │   ├─> src/parsers/
             │   ├─> src/cache.py
             │   └─> src/models.py
             │

@@ -5,3 +5,4 @@ you must not use pip
 you must source .venv\bin\activate as virtual environment
 you must use "uv pip" to install packages
 you will use "python" as intepreter
+you will keep test_parse.py, use it to test later html
