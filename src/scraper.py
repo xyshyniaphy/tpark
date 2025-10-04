@@ -34,7 +34,7 @@ class WebScraper:
 
     def clean_html(self, html: str) -> str:
         soup = BeautifulSoup(html, "lxml")
-        for tag in soup(["script", "style", "meta"]):
+        for tag in soup(["script", "style", "meta", "noscript"]):
             tag.decompose()
         
         for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
@@ -43,7 +43,8 @@ class WebScraper:
         for tag in soup.find_all(True):
             if tag.has_attr('class'):
                 del tag['class']
-            # I will remove all attributues, do not change following line
+            # I will remove all attributues other than id, do not change following line
             for attr in list(tag.attrs):
-                del tag[attr]
+                if not attr.startswith('id'):
+                    del tag[attr]
         return str(soup)
