@@ -4714,5 +4714,993 @@ No parking lots found.
 
 ## Parsing: `www.athome.co.jp_6397692922ce1cb4ea436acd2db67d50.html` (Domain: www.athome.co.jp)
 
-No parking lots found.
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "バイク／赤坂駐車場",
+    "address": "港区赤坂２丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 12100,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "バイク／パークハビオ赤坂",
+    "address": "港区赤坂６丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 16500,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "赤坂グランドハウス駐車場　バイクスペース",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 19800,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "ＶＯＲＴ赤坂見附ビル",
+    "address": "港区赤坂３丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 36300,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂９丁目(乃木坂駅) の駐車場",
+    "address": "港区赤坂９丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 38500,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "赤坂駐車場",
+    "address": "港区赤坂３丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "赤坂ミュージックイン",
+    "address": "港区赤坂６丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂９丁目(乃木坂駅) の駐車場",
+    "address": "港区赤坂９丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 44000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂２丁目(溜池山王駅) の駐車場",
+    "address": "港区赤坂２丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 46200,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "オリックス赤坂２丁目ビル　大型ロールーフ車室",
+    "address": "港区赤坂２丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 46200,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 46200,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "サンウッド赤坂フラッツ　小型ロールーフ車室",
+    "address": "港区赤坂９丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": null,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂９丁目(赤坂駅) の駐車場",
+    "address": "港区赤坂９丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": null,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "３２９９０３　赤坂６丁目Ｉ",
+    "address": "港区赤坂６丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 49500,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂６丁目(赤坂駅) の駐車場",
+    "address": "港区赤坂６丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 49500,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂６丁目(赤坂駅) の駐車場",
+    "address": "港区赤坂６丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 49500,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "７３４８８９　青山タワープレイス",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 49500,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "赤坂８丁目Ｉ",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 49500,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂６丁目(六本木駅) の駐車場",
+    "address": "港区赤坂６丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 55000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂８丁目(青山一丁目駅) の駐車場",
+    "address": "港区赤坂８丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 55000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "赤坂９丁目駐車場",
+    "address": "港区赤坂９丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 55000,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
+
+```json
+{
+    "url": "https://www.athome.co.jp/placeholder",
+    "name": "港区 赤坂２丁目(溜池山王駅) の駐車場",
+    "address": "港区赤坂２丁目",
+    "coordinates": null,
+    "distance_km": null,
+    "dimensions": {
+        "length_m": null,
+        "width_m": null,
+        "height_m": null
+    },
+    "amenities": {
+        "is_24_7": false,
+        "has_ev_charger": false,
+        "is_covered": false
+    },
+    "pricing": {
+        "monthly_fee": 74800,
+        "deposit_months": null,
+        "key_money_months": null
+    },
+    "score": 0.0,
+    "score_breakdown": {
+        "dimension_score": 0.0,
+        "price_score": 0.0,
+        "distance_score": 0.0,
+        "amenity_score": 0.0
+    },
+    "raw_text": null
+}
+```
 
