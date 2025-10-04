@@ -16,12 +16,7 @@ Example:
 import random
 import time
 from typing import Any, Dict, List, Optional
-import warnings
-
 import requests
-from bs4 import XMLParsedAsHTMLWarning
-
-warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 # ==============================================================================
 # CONSTANTS

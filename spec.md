@@ -146,7 +146,7 @@ __version__ = "1.0.0"
 ---
 
 #### `src/scraper.py` - Web Scraping
-**Purpose:** Robust web scraping with anti-bot measures. Ignores `XMLParsedAsHTMLWarning` for broader compatibility.
+**Purpose:** Robust web scraping with anti-bot measures
 
 **Classes:**
 - `WebScraper`
