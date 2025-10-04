@@ -43,10 +43,12 @@ class CacheManager:
         create_directory(self.cache_dir)
 
     def _get_cache_path(self, url: str, location: str, extension: str) -> Path:
-        """Generate a consistent cache file path."""
+        """Generate a consistent cache file path with domain prefix."""
+        from urllib.parse import urlparse
+        domain = urlparse(url).netloc
         unique_string = f"{url}-{location}"
         hashed_name = hashlib.md5(unique_string.encode()).hexdigest()
-        return self.cache_dir / f"{hashed_name}.{extension}"
+        return self.cache_dir / f"{domain}_{hashed_name}.{extension}"
 
     def save_html(self, url: str, location: str, html_content: str) -> Path:
         """
