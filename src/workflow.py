@@ -24,7 +24,7 @@ from langgraph.graph import StateGraph, END
 from src.cache import CacheManager
 from src.config import validate_config, load_system_prompt
 from src.geocoding import geocode_location, parse_coordinates, calculate_distance
-from src.gemini import GeminiExtractor
+
 from src.models import WorkflowState, ParkingLot
 from src.output import generate_markdown_output, save_output
 from src.scoring import calculate_parking_score, rank_parking_lots
@@ -93,6 +93,11 @@ def node_searxng_search(state: WorkflowState) -> WorkflowState:
     logger.debug(f"Found {len(results)} search results.")
     return state
 
+
+import json
+from bs4 import BeautifulSoup
+from src.parsers import get_parser
+
 def node_scrape_and_cache(state: WorkflowState) -> WorkflowState:
     """Scrape web pages, clean HTML, and cache the cleaned content."""
     config = state["config"]
@@ -102,10 +107,11 @@ def node_scrape_and_cache(state: WorkflowState) -> WorkflowState:
     scraper = WebScraper(config)
     cache = CacheManager(config["cache_dir"], config["cache_ttl_days"])
     
-    scraped_content = []
+    all_parking_data = []
     processed_urls = set()
+    max_monthly_fee = config.get("max_monthly_fee")
 
-    for result in state.get("search_results", []) :
+    for result in state.get("search_results", []):
         url = result["url"]
         if url in processed_urls:
             continue
@@ -117,62 +123,62 @@ def node_scrape_and_cache(state: WorkflowState) -> WorkflowState:
         cached_html = cache.load_html(url, place_name)
         if cached_html:
             logger.debug(f"Cache hit for {url}. Loading from cache.")
-            scraped_content.append({"url": url, "html": cached_html})
+            cleaned_html = cached_html
+        else:
+            logger.debug(f"Cache miss for {url}. Fetching from web.")
+            html = scraper.fetch(url)
+            if not html:
+                logger.warning(f"Failed to fetch HTML from {url}.")
+                continue
+            
+            logger.debug(f"Cleaning HTML for {url}")
+            cleaned_html = scraper.clean_html(html)
+            cache.save_html(url, place_name, cleaned_html)
+
+        Parser = get_parser(url)
+        if not Parser:
+            logger.warning(f"No parser found for domain from URL: {url}")
             continue
 
-        logger.debug(f"Cache miss for {url}. Fetching from web.")
-        html = scraper.fetch(url)
-        if not html:
-            logger.warning(f"Failed to fetch HTML from {url}.")
-            continue
-        
-        logger.debug(f"Cleaning HTML for {url}")
-        cleaned_html = scraper.clean_html(html)
-
-        cache.save_html(url, place_name, cleaned_html)
-        scraped_content.append({"url": url, "html": cleaned_html})
-
-    state["scraped_content"] = scraped_content
-    logger.debug(f"Finished scraping and cleaning. Total pages processed: {len(scraped_content)}")
-    
-    # For debugging, save the cleaned HTML to a file
-    if scraped_content:
-        with open("cleaned_debug.html", "w", encoding="utf-8") as f:
-            f.write(scraped_content[0]["html"])
-        logger.info("Saved the first cleaned HTML to cleaned_debug.html for debugging.")
-
-    return state
-
-def node_extract_with_gemini(state: WorkflowState) -> WorkflowState:
-    """Extract structured data from HTML using Gemini."""
-    config = state["config"]
-    system_prompt = state["system_prompt"]
-    logger.debug("--- Extracting structured data with Gemini ---")
-    
-    extractor = GeminiExtractor(config, system_prompt)
-    extracted_data = []
-    
-    scraped_content = state.get("scraped_content", [])
-    logger.debug(f"Processing {len(scraped_content)} scraped documents with Gemini.")
-
-    for i, content in enumerate(scraped_content):
-        url = content["url"]
-        html = content["html"]
-        logger.debug(f"Extracting from document {i+1}/{len(scraped_content)} (URL: {url}, HTML length: {len(html)})")
+        parser = Parser()
+        soup = BeautifulSoup(cleaned_html, 'lxml')
         
         try:
-            lots = extractor.extract_parking_data(html, url)
-            if lots:
-                logger.debug(f"Extracted {len(lots)} parking lots from {url}.")
-                extracted_data.extend(lots)
-            else:
-                logger.warning(f"No parking lots extracted from {url}.")
+            parking_lots = parser.parse(soup, url)
+            if parking_lots:
+                for lot in parking_lots:
+                    if lot.pricing.monthly_fee is not None and (max_monthly_fee is None or lot.pricing.monthly_fee <= max_monthly_fee):
+                        all_parking_data.append(lot.model_dump())
         except Exception as e:
-            logger.error(f"An error occurred during Gemini extraction for {url}: {e}", exc_info=True)
+            logger.error(f"An error occurred during parsing for {url}: {e}", exc_info=True)
 
-    state["extracted_data"] = extracted_data
-    logger.debug(f"Finished Gemini extraction. Total lots extracted: {len(extracted_data)}")
+    state["scraped_content"] = all_parking_data
+    logger.debug(f"Finished scraping and parsing. Total valid lots found: {len(all_parking_data)}")
+    
+    # For debugging, save the scraped data to a file
+    with open("clean_test.md", "w", encoding="utf-8") as f:
+        json.dump(all_parking_data, f, indent=4, ensure_ascii=False)
+    logger.info("Saved scraped content to clean_test.md for debugging.")
+
     return state
+
+def prepare_data_for_scoring(state: WorkflowState) -> WorkflowState:
+    """Convert scraped data to ParkingLot objects."""
+    logger.debug("--- Preparing data for scoring ---")
+    extracted_data = [ParkingLot(**lot) for lot in state["scraped_content"]]
+    state["extracted_data"] = extracted_data
+    logger.debug(f"Prepared {len(extracted_data)} lots for scoring.")
+    
+    # Save the data to filtered_result.md
+    with open("filtered_result.md", "w", encoding="utf-8") as f:
+        json.dump(state["scraped_content"], f, indent=4, ensure_ascii=False)
+    logger.info("Saved filtered results to filtered_result.md.")
+    
+    return state
+
+
+
+
 
 def node_score_and_rank(state: WorkflowState) -> WorkflowState:
     """Score and rank the extracted parking lots."""
@@ -255,7 +261,7 @@ def build_workflow_graph() -> StateGraph:
     workflow.add_node("geocode_location", node_geocode_location)
     workflow.add_node("searxng_search", node_searxng_search)
     workflow.add_node("scrape_and_cache", node_scrape_and_cache)
-    workflow.add_node("extract_with_gemini", node_extract_with_gemini)
+    workflow.add_node("prepare_data_for_scoring", prepare_data_for_scoring)
     workflow.add_node("score_and_rank", node_score_and_rank)
     workflow.add_node("generate_output", node_generate_output)
 
@@ -265,11 +271,10 @@ def build_workflow_graph() -> StateGraph:
     workflow.add_edge("load_system_prompt", "geocode_location")
     workflow.add_edge("geocode_location", "searxng_search")
     workflow.add_edge("searxng_search", "scrape_and_cache")
-    workflow.add_edge("scrape_and_cache", END)
-    # workflow.add_edge("scrape_and_cache", "extract_with_gemini")
-    # workflow.add_edge("extract_with_gemini", "score_and_rank")
-    # workflow.add_edge("score_and_rank", "generate_output")
-    # workflow.add_edge("generate_output", END)
+    workflow.add_edge("scrape_and_cache", "prepare_data_for_scoring")
+    workflow.add_edge("prepare_data_for_scoring", "score_and_rank")
+    workflow.add_edge("score_and_rank", "generate_output")
+    workflow.add_edge("generate_output", END)
 
     return workflow.compile()
 
