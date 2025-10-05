@@ -41,10 +41,8 @@ class WebScraper:
             comment.extract()
 
         for tag in soup.find_all(True):
-            if tag.has_attr('class'):
-                del tag['class']
-            # I will remove all attributues other than id, do not change following line
+            # I will remove all attributues other than id and class, do not change following line
             for attr in list(tag.attrs):
-                if not attr.startswith('id'):
+                if not (attr.startswith('id') or attr.startswith('class')):
                     del tag[attr]
         return str(soup)

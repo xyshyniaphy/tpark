@@ -6,7 +6,7 @@ import copy
 from typing import List
 from urllib.parse import urljoin
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup
 
 # 注意: 以下のモデルとベースクラスは、ユーザーの既存のプロジェクト構造に
 # 基づいていると仮定します。
@@ -42,28 +42,23 @@ class CarParkingJpParser(BaseParser):
         # 詳細ページ特有の「詳細情報」という見出しがあるかチェック
         if self._is_detail_page(soup):
             return self._parse_detail_page(soup, url)
-        # リストページ特有の見出しがあるかチェック
-        elif self._is_list_page(soup):
-            return self._parse_list_page(soup, url)
 
-        # どちらのタイプでもない場合は空のリストを返す
-        # これにより、予期しないページ構造でもエラーなく空の結果を返す
+        # リストページは解析しない
         return []
 
     def _is_detail_page(self, soup: BeautifulSoup) -> bool:
         """
         ページが駐車場の詳細ページであるかを判定します。
-        「詳細情報」というh3見出しの存在を基準とします。
+        <section class="parking-detail"> の存在を基準とします。
         """
-        return bool(soup.find("h3", string="詳細情報"))
+        return bool(soup.find("section", class_="parking-detail"))
 
     def _is_list_page(self, soup: BeautifulSoup) -> bool:
         """
         ページが駐車場のリストページであるかを判定します。
-        「周辺の月極駐車場」というテキストを含むh2見出しの存在を基準とします。
+        <p class="count"> の存在を基準とします。
         """
-        h2 = soup.find("h2")
-        return h2 and "周辺の月極駐車場" in h2.get_text()
+        return bool(soup.find("p", class_="count"))
 
     def _parse_detail_page(self, soup: BeautifulSoup, url: str) -> List[ParkingLot]:
         """
@@ -73,6 +68,10 @@ class CarParkingJpParser(BaseParser):
         """
         lots: List[ParkingLot] = []
         try:
+            parking_details_section = soup.find("section", class_="parking-detail")
+            if not parking_details_section:
+                return []
+
             name_tag = soup.find("h2")
             name = name_tag.get_text(strip=True) if name_tag else "名称不明"
 
@@ -84,10 +83,7 @@ class CarParkingJpParser(BaseParser):
                 # pricing, dimensions, amenitiesはデフォルトファクトリで初期化
             )
 
-            details_section = soup.find("h3", string="詳細情報")
-            if not details_section:
-                return []
-            details_table = details_section.find_next("table")
+            details_table = parking_details_section.find("table", class_="parking-table")
             if not details_table:
                 return []
 
@@ -129,10 +125,14 @@ class CarParkingJpParser(BaseParser):
                         )
 
             # 車室ごとの詳細情報を解析
-            car_space_container = details_table.find_next_sibling("div")
-            space_tables = []
-            if isinstance(car_space_container, Tag):
-                space_tables = car_space_container.find_all("table")
+            car_space_container = parking_details_section.find(
+                "div", class_="parking-spacelist"
+            )
+            space_tables = (
+                car_space_container.find_all("table")
+                if car_space_container
+                else []
+            )
 
             if space_tables:
                 for table in space_tables:
@@ -187,64 +187,5 @@ class CarParkingJpParser(BaseParser):
             # 解析中に予期せぬエラーが発生した場合のフォールバック
             # 実際にはロギングライブラリを使用することが望ましい
             print(f"Error parsing detail page {url}: {e}")
-
-        return lots
-
-    def _parse_list_page(self, soup: BeautifulSoup, url: str) -> List[ParkingLot]:
-        """
-        駐車場のリストページを解析します。
-        ページ内の各駐車場アイテムから基本情報を抽出し、ParkingLotオブジェクトのリストを返します。
-        """
-        lots: List[ParkingLot] = []
-        # '駐車場ID' を含む <li> 要素が駐車場アイテムであると判断
-        list_items = soup.find_all(
-            "li", lambda tag: tag.find("span", string=re.compile(r"駐車場ID"))
-        )
-
-        for item in list_items:
-            try:
-                name_tag = item.find("a")
-                if not name_tag:
-                    continue
-
-                name = name_tag.get_text(strip=True)
-                # 相対URLを絶対URLに変換
-                detail_url = urljoin(url, name_tag.get("href", ""))
-
-                # 賃料情報を持つpタグを特定
-                price_p = item.find("p", string=re.compile(r"賃料："))
-                monthly_fee = None
-                address = None
-
-                if price_p:
-                    price_text = price_p.get_text(strip=True)
-                    price_match = re.search(r"([\d,]+)", price_text)
-                    if price_match:
-                        monthly_fee = int(price_match.group(1).replace(",", ""))
-
-                    # 賃料タグの直前にあるpタグを住所と仮定
-                    # この構造はHTMLに依存するが、リストページでは比較的安定している
-                    address_p = price_p.find_previous_sibling("p")
-                    if address_p:
-                        address = address_p.get_text(strip=True)
-
-                # 賃料が取得できた場合のみリストに追加
-                if monthly_fee is not None:
-                    pricing = ParkingPricing(monthly_fee=monthly_fee)
-                    # リストページからはサイズや詳細な設備は取得できないため、
-                    # モデルのデフォルト値が使用される
-                    lots.append(
-                        ParkingLot(
-                            url=detail_url,
-                            name=name,
-                            address=address,
-                            pricing=pricing,
-                        )
-                    )
-            except (AttributeError, TypeError, ValueError) as e:
-                # 個々のアイテムの解析エラーはスキップし、処理を継続
-                # 実際にはロギングすることが望ましい
-                print(f"Skipping an item on list page {url} due to parsing error: {e}")
-                continue
 
         return lots
